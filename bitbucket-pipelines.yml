@@ -10,6 +10,7 @@ pipelines:
         image: php:7.2.27-cli-buster
         script:
           - apt-get update && apt-get install -y \
+              zip \
               git \
               libfreetype6-dev \
               libjpeg62-turbo-dev \
