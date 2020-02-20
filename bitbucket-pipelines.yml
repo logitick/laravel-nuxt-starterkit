@@ -1,8 +1,11 @@
+image: docker:stable
+
+options:
+  docker: true
+
 pipelines:
   default:
     - step:
         script:
           - docker-compose build app test-runner 
           - docker-compose up test-runner
-        services:
-          - docker
