@@ -14,11 +14,12 @@ services:
       - app
 
   app:
+    image: claritecs/bunker-maestro
     build:
       context: ./laravel
       dockerfile: ./docker/apache/Dockerfile
       args:
-        COMPOSER: "true"
+        INSTALL_COMPOSER: "true"
         XDEBUG: "true"
     volumes:
       - './laravel:/var/www/html'
@@ -78,3 +79,9 @@ services:
       PMA_ABSOLUTE_URI: 'localhost:${PMA_PORT}'
     ports:
       - '${PMA_PORT}:80'
+
+  test-runner:
+    build:
+      context: ./laravel
+      dockerfile: ./docker/test-runner/Dockerfile
+    # command: bash -c "composer dumpautoload && composer pipeline:checks"

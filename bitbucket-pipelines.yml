@@ -1,0 +1,10 @@
+pipelines:
+  default:
+    - step:
+        script:
+          - npm install
+          - npm test
+          - docker-compose build app test-runner 
+          - docker-compose up test-runner
+        services:
+          - docker

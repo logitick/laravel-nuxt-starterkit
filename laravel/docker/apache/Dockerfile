@@ -1,9 +1,22 @@
+
+FROM composer:1.7 as builder
+
+RUN mkdir -p /var/www/html
+WORKDIR /var/www/html
+
+COPY composer.json ./
+COPY composer.lock ./
+COPY database/ database/
+RUN composer install --no-scripts --no-autoloader --no-dev --ignore-platform-reqs
+
+COPY . /var/www/app
+
 FROM php:7.2.27-apache-buster
 
 ARG XDEBUG=false
 ENV XDEBUG ${XDEBUG}
-ARG COMPOSER=false
-ENV COMPOSER ${COMPOSER}}
+ARG INSTALL_COMPOSER=false
+ENV INSTALL_COMPOSER ${INSTALL_COMPOSER}
 
 ## in case user has different UID
 ARG PUID=1000
@@ -29,14 +42,15 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql
 
 # install composer
-RUN if [ ${COMPOSER} = true ]; then \
-        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php && php -r "unlink('composer-setup.php');" && cp composer.phar bin/composer \
+RUN if [ ${INSTALL_COMPOSER} = true ]; then \
+        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php && php -r "unlink('composer-setup.php');" && mv composer.phar /usr/bin/composer \
     ;fi
 
 COPY . /var/www/html
 
 WORKDIR /var/www/html
 
+COPY --from=builder /var/www/html/vendor/ ./vendor/
 RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data
 RUN chown -R www-data:www-data /var/www && chmod -Rv ug+rwx storage bootstrap/cache
 
