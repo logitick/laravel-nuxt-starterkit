@@ -7,10 +7,8 @@ pipelines:
   default:
     - step:
         script:
-          - ci/dependencies.sh
-          - docker-compose run -T client /usr/local/src/test.sh
-          - docker-compose down
           - docker-compose build app test-runner 
           - docker-compose up test-runner
+          - docker-compose down
         services:
           - docker
