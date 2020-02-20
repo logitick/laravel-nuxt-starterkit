@@ -7,7 +7,7 @@ pipelines:
   default:
     - step:
         name: Backend Test
-        image: php:7.2.27-cli-buster
+        image: php:7.2.27-apache-buster
         script:
           - apt-get update && apt-get install -y \
               zip \
